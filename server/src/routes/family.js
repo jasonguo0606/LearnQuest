@@ -3,10 +3,19 @@ const jwt = require('jsonwebtoken');
 const Family = require('../models/Family');
 const auth = require('../middleware/auth');
 const { success, error } = require('../helpers/response');
+const rateLimit = require('express-rate-limit');
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20,
+  message: { success: false, data: null, error: { code: 'RATE_LIMITED', message: '请求太频繁，请稍后再试' } },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 const JWT_SECRET = process.env.JWT_SECRET || 'test-secret';
 
-router.post('/register', async (req, res) => {
+router.post('/register', authLimiter, async (req, res) => {
   try {
     const { name, pin } = req.body;
 
@@ -29,7 +38,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', authLimiter, async (req, res) => {
   try {
     const { familyId } = req.body;
 
@@ -54,7 +63,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.post('/verify-pin', auth, async (req, res) => {
+router.post('/verify-pin', authLimiter, auth, async (req, res) => {
   try {
     const { pin } = req.body;
 

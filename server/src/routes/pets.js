@@ -31,6 +31,9 @@ router.post('/choose', auth, async (req, res) => {
     const { type, name } = req.body;
 
     const family = await Family.findById(req.familyId);
+    if (!family) {
+      return res.status(404).json(error('NOT_FOUND', 'Family not found'));
+    }
     if (family.initialPetChosen) {
       return res.status(400).json(error('ALREADY_CHOSEN', 'Initial pet already chosen'));
     }
@@ -148,7 +151,7 @@ router.put('/:id/active', auth, async (req, res) => {
     const updated = await Pet.findByIdAndUpdate(
       pet._id,
       { $set: { isActive: true } },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     res.json(success(updated));

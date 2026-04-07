@@ -89,7 +89,7 @@ router.put('/:id', auth, parent, async (req, res) => {
     const updated = await Subject.findByIdAndUpdate(
       req.params.id,
       { $set: updates },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     res.json(success(updated));

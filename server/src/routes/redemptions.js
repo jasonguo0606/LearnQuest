@@ -51,7 +51,11 @@ router.post('/', auth, async (req, res) => {
 router.get('/', auth, async (req, res) => {
   try {
     const query = { familyId: req.familyId };
+    const VALID_STATUSES = ['pending', 'confirmed'];
     if (req.query.status) {
+      if (!VALID_STATUSES.includes(req.query.status)) {
+        return res.status(400).json(error('INVALID_INPUT', 'Invalid status value'));
+      }
       query.status = req.query.status;
     }
 

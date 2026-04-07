@@ -15,7 +15,7 @@ const feedPet = async (pet) => {
         lastFedAt: new Date(),
       },
     },
-    { new: true }
+    { returnDocument: 'after' }
   );
 
   return { pet: updated, leveledUp: newLevel > pet.level };
