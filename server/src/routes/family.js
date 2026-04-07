@@ -5,13 +5,15 @@ const auth = require('../middleware/auth');
 const { success, error } = require('../helpers/response');
 const rateLimit = require('express-rate-limit');
 
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20,
-  message: { success: false, data: null, error: { code: 'RATE_LIMITED', message: '请求太频繁，请稍后再试' } },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+const authLimiter = process.env.NODE_ENV === 'test'
+  ? (_req, _res, next) => next()
+  : rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 20,
+      message: { success: false, data: null, error: { code: 'RATE_LIMITED', message: '请求太频繁，请稍后再试' } },
+      standardHeaders: true,
+      legacyHeaders: false,
+    });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'test-secret';
 
