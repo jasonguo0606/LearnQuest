@@ -4,6 +4,7 @@ const Record = require('../models/Record');
 const auth = require('../middleware/auth');
 const parent = require('../middleware/parent');
 const { addTransaction } = require('../services/starService');
+const { checkAchievements } = require('../services/achievementService');
 const { success, error } = require('../helpers/response');
 
 router.post('/', auth, parent, async (req, res) => {
@@ -35,8 +36,7 @@ router.post('/', auth, parent, async (req, res) => {
       description: `${taskName} +${points}`,
     });
 
-    // Achievement check placeholder — filled in Task 6
-    const newAchievements = [];
+    const newAchievements = await checkAchievements(req.familyId);
 
     res.status(201).json(success({ record, newAchievements }));
   } catch (err) {
