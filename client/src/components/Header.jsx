@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { verifyPin } from '../services/familyService';
 import StarBalance from './StarBalance';
 import PINPad from './PINPad';
 
 export default function Header({ showBalance = true }) {
-  const { family, isParent, exitParentMode } = useAuth();
+  const { family, isParent, exitParentMode, enterParentMode } = useAuth();
   const [showPin, setShowPin] = useState(false);
 
   return (
@@ -40,9 +41,14 @@ export default function Header({ showBalance = true }) {
       {showPin && (
         <PINPad
           title="输入家长PIN码"
-          onSubmit={(pin) => {
-            setShowPin(false);
-            // TODO Task 10: call verifyPin(pin) → enterParentMode(token)
+          onSubmit={async (pin) => {
+            try {
+              const data = await verifyPin(pin);
+              enterParentMode(data.token);
+              setShowPin(false);
+            } catch {
+              alert('PIN码错误');
+            }
           }}
           onClose={() => setShowPin(false)}
         />
