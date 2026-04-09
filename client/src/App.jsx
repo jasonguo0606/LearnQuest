@@ -1,3 +1,4 @@
+import { Component } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import RegisterPage from './pages/RegisterPage';
@@ -8,6 +9,29 @@ import ShopPage from './pages/ShopPage';
 import RecordsPage from './pages/RecordsPage';
 import ParentDashboard from './pages/ParentDashboard';
 
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-xl font-bold text-red-600 mb-2">出错了</h2>
+            <p className="text-gray-500">请刷新页面重试</p>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const RequireAuth = ({ children }) => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Navigate to="/register" />;
@@ -15,8 +39,9 @@ const RequireAuth = ({ children }) => {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Routes>
+    <ErrorBoundary>
+      <AuthProvider>
+        <Routes>
         <Route path="/register" element={<RegisterPage />} />
         <Route
           path="/home"
@@ -67,7 +92,8 @@ export default function App() {
           }
         />
         <Route path="*" element={<Navigate to="/register" />} />
-      </Routes>
-    </AuthProvider>
+        </Routes>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
