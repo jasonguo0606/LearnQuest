@@ -54,7 +54,7 @@ function CalendarGrid({ month, data }) {
 export default function RecordsPage() {
   const [month, setMonth] = useState(() => new Date().toISOString().slice(0, 7));
 
-  const { data: calendar, isLoading } = useQuery({
+  const { data: calendar, isLoading, error } = useQuery({
     queryKey: ['records', 'calendar', month],
     queryFn: () => getCalendar(month),
   });
@@ -90,6 +90,10 @@ export default function RecordsPage() {
         </div>
 
         {isLoading ? <LoadingSpinner /> : <CalendarGrid month={month} data={calendar} />}
+
+        {error && (
+          <p className="text-center text-red-500 py-8">加载失败，请刷新重试</p>
+        )}
 
         {/* Legend */}
         <div className="flex items-center justify-center gap-4 mt-4 text-xs text-gray-500">

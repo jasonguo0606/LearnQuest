@@ -13,13 +13,15 @@ export default function ShopPage() {
   const queryClient = useQueryClient();
   const { data: balance } = useStars();
 
-  const { data: petData, isLoading: petsLoading } = useQuery({
+  const [redeemError, setRedeemError] = useState(null);
+
+  const { data: petData, isLoading: petsLoading, error: petsError } = useQuery({
     queryKey: ['pets'],
     queryFn: getPets,
     enabled: tab === 'pets',
   });
 
-  const { data: rewards, isLoading: rewardsLoading } = useQuery({
+  const { data: rewards, isLoading: rewardsLoading, error: rewardsError } = useQuery({
     queryKey: ['rewards'],
     queryFn: getRewards,
     enabled: tab === 'rewards',
@@ -28,14 +30,23 @@ export default function ShopPage() {
   const redeemMutation = useMutation({
     mutationFn: redeem,
     onSuccess: () => {
+      setRedeemError(null);
       queryClient.invalidateQueries({ queryKey: ['stars', 'balance'] });
     },
-    onError: () => {
-      // TODO: show error toast
+    onError: (err) => {
+      setRedeemError(err?.response?.data?.message ?? '兑换失败，请重试');
     },
   });
 
   if (petsLoading || rewardsLoading) return <LoadingSpinner />;
+
+  if (petsError || rewardsError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-500">加载失败，请刷新重试</p>
+      </div>
+    );
+  }
 
   const availablePets = petData?.available?.filter((p) => !p.owned) ?? [];
 
@@ -67,6 +78,7 @@ export default function ShopPage() {
 
         {tab === 'rewards' && (
           <div className="space-y-3">
+            {redeemError && <p className="text-red-500 text-sm text-center mb-2">{redeemError}</p>}
             {rewards?.length === 0 && (
               <p className="text-center text-gray-500 py-8">还没有奖励哦</p>
             )}
