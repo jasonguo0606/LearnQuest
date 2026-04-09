@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '../context/AuthContext';
@@ -34,4 +35,32 @@ test('renders pet selection with 3 initial pets', async () => {
   expect(screen.getByText('小猫咪')).toBeInTheDocument();
   expect(screen.getByText('小狗狗')).toBeInTheDocument();
   expect(screen.getByText('小兔子')).toBeInTheDocument();
+});
+
+test('selecting a pet shows the name input', async () => {
+  const user = userEvent.setup();
+  render(<PetSelectPage />, { wrapper: createWrapper() });
+  await screen.findByText('小猫咪');
+  await user.click(screen.getByText('小猫咪'));
+  expect(screen.getByPlaceholderText('给宠物取个名字吧！')).toBeInTheDocument();
+});
+
+test('confirm button disabled when name is empty', async () => {
+  const user = userEvent.setup();
+  render(<PetSelectPage />, { wrapper: createWrapper() });
+  await screen.findByText('小猫咪');
+  await user.click(screen.getByText('小猫咪'));
+  expect(screen.getByText('确认选择')).toBeDisabled();
+});
+
+test('calls choosePet with correct arguments when submitted', async () => {
+  const { choosePet } = await import('../services/petService');
+  choosePet.mockResolvedValue({});
+  const user = userEvent.setup();
+  render(<PetSelectPage />, { wrapper: createWrapper() });
+  await screen.findByText('小猫咪');
+  await user.click(screen.getByText('小猫咪'));
+  await user.type(screen.getByPlaceholderText('给宠物取个名字吧！'), '咪咪');
+  await user.click(screen.getByText('确认选择'));
+  expect(choosePet).toHaveBeenCalledWith('cat', '咪咪');
 });

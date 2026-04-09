@@ -12,7 +12,9 @@ export default function PetSelectPage() {
   const queryClient = useQueryClient();
   const { family } = useAuth();
 
-  const { data, isLoading } = useQuery({
+  const [mutationError, setMutationError] = useState(null);
+
+  const { data, isLoading, error: queryError } = useQuery({
     queryKey: ['pets'],
     queryFn: getPets,
   });
@@ -23,6 +25,9 @@ export default function PetSelectPage() {
       queryClient.invalidateQueries({ queryKey: ['pets'] });
       navigate('/home');
     },
+    onError: (err) => {
+      setMutationError(err?.response?.data?.message ?? '选择宠物失败，请重试');
+    },
   });
 
   const initialPets = data?.available?.filter((p) => p.unlockCost === 0) ?? [];
@@ -31,6 +36,14 @@ export default function PetSelectPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-xl text-gray-500">加载中...</div>
+      </div>
+    );
+  }
+
+  if (queryError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-500">加载失败，请刷新重试</p>
       </div>
     );
   }
@@ -74,10 +87,16 @@ export default function PetSelectPage() {
           <input
             type="text"
             value={petName}
-            onChange={(e) => setPetName(e.target.value)}
+            onChange={(e) => {
+              setPetName(e.target.value);
+              setMutationError(null);
+            }}
             placeholder="给宠物取个名字吧！"
             className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-400 outline-none text-lg mb-4"
           />
+          {mutationError && (
+            <p className="text-red-500 text-sm text-center mb-2">{mutationError}</p>
+          )}
           <button
             onClick={() => {
               if (petName.trim()) mutation.mutate();
