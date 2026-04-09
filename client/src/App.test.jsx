@@ -1,7 +1,10 @@
 import { render, screen } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
 import App from './App';
 
-test('renders app title', () => {
-  render(<App />);
-  expect(screen.getByText('LearnQuest')).toBeInTheDocument();
+describe('App', () => {
+  it('renders app title', () => {
+    render(<App />);
+    expect(screen.getByText('LearnQuest')).toBeInTheDocument();
+  });
 });
