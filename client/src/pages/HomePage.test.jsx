@@ -41,3 +41,18 @@ test('shows pet name when pet is loaded', async () => {
   render(<HomePage />, { wrapper: createWrapper() });
   expect(await screen.findByText('咪咪')).toBeInTheDocument();
 });
+
+test('shows empty state when no active pet', async () => {
+  const { getPets } = await import('../services/petService');
+  getPets.mockResolvedValueOnce({ owned: [] });
+  render(<HomePage />, { wrapper: createWrapper() });
+  expect(await screen.findByText('还没有宠物哦')).toBeInTheDocument();
+});
+
+test('feed button disabled when balance is insufficient', async () => {
+  const { getBalance } = await import('../services/statsService');
+  getBalance.mockResolvedValueOnce(0);
+  render(<HomePage />, { wrapper: createWrapper() });
+  const feedBtn = await screen.findByRole('button', { name: /喂食/ });
+  expect(feedBtn).toBeDisabled();
+});

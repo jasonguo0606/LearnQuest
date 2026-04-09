@@ -15,7 +15,7 @@ export default function HomePage() {
   const { data: balance } = useStars();
   const [feedMessage, setFeedMessage] = useState('');
 
-  const { data: petData, isLoading } = useQuery({
+  const { data: petData, isLoading, error: petError } = useQuery({
     queryKey: ['pets'],
     queryFn: getPets,
   });
@@ -40,6 +40,14 @@ export default function HomePage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-xl text-gray-500">加载中...</div>
+      </div>
+    );
+  }
+
+  if (petError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-500">加载失败，请刷新重试</p>
       </div>
     );
   }
@@ -70,7 +78,7 @@ export default function HomePage() {
 
             <button
               onClick={() => feedMutation.mutate()}
-              disabled={feedMutation.isPending || (balance ?? 0) < FEED_COST}
+              disabled={feedMutation.isPending || !activePet || (balance ?? 0) < FEED_COST}
               className="bg-green-500 hover:bg-green-600 disabled:bg-gray-300 text-white font-bold py-3 px-8 rounded-xl text-lg transition-colors mb-2"
             >
               喂食 (-{FEED_COST}⭐)
