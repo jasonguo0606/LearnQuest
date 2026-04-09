@@ -42,6 +42,7 @@ export default function Header({ showBalance = true }) {
           title="输入家长PIN码"
           onSubmit={(pin) => {
             setShowPin(false);
+            // TODO Task 10: call verifyPin(pin) → enterParentMode(token)
           }}
           onClose={() => setShowPin(false)}
         />

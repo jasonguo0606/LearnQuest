@@ -6,15 +6,17 @@ export default function PINPad({ title, onSubmit, onClose }) {
   const handleDigit = (digit) => {
     if (pin.length < 4) {
       const newPin = pin + digit;
-      setPin(newPin);
       if (newPin.length === 4) {
+        setPin('');
         onSubmit(newPin);
+      } else {
+        setPin(newPin);
       }
     }
   };
 
   const handleDelete = () => {
-    setPin(pin.slice(0, -1));
+    setPin((prev) => prev.slice(0, -1));
   };
 
   return (
