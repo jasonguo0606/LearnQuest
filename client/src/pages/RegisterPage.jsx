@@ -19,14 +19,9 @@ export default function RegisterPage() {
       return await login(regData.familyId);
     },
     onSuccess: (data) => {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('childToken', data.token);
-      authLogin({ familyId: data.familyId, name: data.name, isParent: false });
-      if (data.initialPetChosen) {
-        navigate('/home');
-      } else {
-        navigate('/pets/select');
-      }
+      // Token stored inside authLogin — AuthContext owns all localStorage writes
+      authLogin({ familyId: data.familyId, name: data.name, isParent: false, token: data.token });
+      navigate(data.initialPetChosen ? '/home' : '/pets/select');
     },
     onError: (err) => {
       setError(err.message || '注册失败，请重试');
@@ -42,6 +37,7 @@ export default function RegisterPage() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            setError('');
             mutation.mutate();
           }}
           className="space-y-4"

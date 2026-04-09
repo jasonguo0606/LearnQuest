@@ -12,7 +12,12 @@ export const AuthProvider = ({ children }) => {
   const [family, setFamily] = useState(null);
   const [isParent, setIsParent] = useState(false);
 
-  const login = useCallback(({ familyId, name, isParent: parent }) => {
+  // token is optional — if provided, stored as both token and childToken in localStorage
+  const login = useCallback(({ familyId, name, isParent: parent, token }) => {
+    if (token) {
+      localStorage.setItem('token', token);
+      localStorage.setItem('childToken', token);
+    }
     setFamily({ familyId, name });
     setIsParent(parent);
   }, []);
