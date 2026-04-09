@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { verifyPin } from '../services/familyService';
 import StarBalance from './StarBalance';
@@ -7,6 +8,7 @@ import PINPad from './PINPad';
 export default function Header({ showBalance = true }) {
   const { family, isParent, exitParentMode, enterParentMode } = useAuth();
   const [showPin, setShowPin] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <header className="sticky top-0 bg-white shadow-sm z-40 safe-top">
@@ -45,6 +47,7 @@ export default function Header({ showBalance = true }) {
             try {
               const data = await verifyPin(pin);
               enterParentMode(data.token);
+              navigate('/parent');
               setShowPin(false);
             } catch {
               alert('PIN码错误');

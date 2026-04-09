@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage';
 import AchievementsPage from './pages/AchievementsPage';
 import ShopPage from './pages/ShopPage';
 import RecordsPage from './pages/RecordsPage';
+import ParentDashboard from './pages/ParentDashboard';
 
 const RequireAuth = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -54,6 +55,14 @@ export default function App() {
           element={
             <RequireAuth>
               <RecordsPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/parent"
+          element={
+            <RequireAuth>
+              <ParentDashboard />
             </RequireAuth>
           }
         />
