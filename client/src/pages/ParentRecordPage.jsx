@@ -21,8 +21,11 @@ export default function ParentRecordPage({ onBack }) {
   const mutation = useMutation({
     mutationFn: () => {
       if (useTemplate) {
-        const subject = subjects.find((s) => s._id === subjectId);
-        const template = subject.taskTemplates.find((t) => t.name === taskTemplate);
+        const subject = subjects?.find((s) => s._id === subjectId);
+        const template = subject?.taskTemplates?.find((t) => t.name === taskTemplate);
+        if (!subject || !template) {
+          return Promise.reject(new Error('无效的科目或任务模板'));
+        }
         return createRecord({ subjectId, taskName: template.name, points: template.points });
       }
       return createRecord({

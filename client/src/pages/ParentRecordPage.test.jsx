@@ -44,3 +44,34 @@ test('shows task templates after selecting a subject', async () => {
   await user.selectOptions(select, 's1');
   expect(await screen.findByText(/口算练习/)).toBeInTheDocument();
 });
+
+test('calls createRecord when template task is submitted', async () => {
+  const { createRecord } = await import('../services/recordService');
+  const userEvent = (await import('@testing-library/user-event')).default;
+  const user = userEvent.setup();
+
+  render(<ParentRecordPage onBack={() => {}} />, { wrapper: createWrapper() });
+  await screen.findByText(/数学/);
+
+  await user.selectOptions(screen.getByDisplayValue('选择科目'), 's1');
+  await screen.findByText(/口算练习/);
+
+  await user.selectOptions(screen.getByDisplayValue('选择任务'), '口算练习');
+  await user.click(screen.getByText('确认提交'));
+
+  expect(createRecord).toHaveBeenCalledWith({
+    subjectId: 's1',
+    taskName: '口算练习',
+    points: 10,
+  });
+});
+
+test('calls onBack when 返回 button is clicked', async () => {
+  const onBack = vi.fn();
+  render(<ParentRecordPage onBack={onBack} />, { wrapper: createWrapper() });
+  await screen.findByText('记录成绩');
+  await screen.findByText('返回');
+  const backBtn = screen.getByText('返回');
+  backBtn.click();
+  expect(onBack).toHaveBeenCalledTimes(1);
+});
