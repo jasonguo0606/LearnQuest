@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import RegisterPage from './pages/RegisterPage';
 import PetSelectPage from './pages/PetSelectPage';
 import HomePage from './pages/HomePage';
+import AchievementsPage from './pages/AchievementsPage';
 
 const RequireAuth = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -27,6 +28,14 @@ export default function App() {
           element={
             <RequireAuth>
               <PetSelectPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/achievements"
+          element={
+            <RequireAuth>
+              <AchievementsPage />
             </RequireAuth>
           }
         />
