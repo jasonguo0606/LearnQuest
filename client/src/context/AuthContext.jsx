@@ -21,9 +21,11 @@ export const AuthProvider = ({ children }) => {
     setFamily(null);
     setIsParent(false);
     localStorage.removeItem('token');
+    localStorage.removeItem('childToken');
   }, []);
 
   const enterParentMode = useCallback((token) => {
+    localStorage.setItem('childToken', localStorage.getItem('token') ?? '');
     setIsParent(true);
     localStorage.setItem('token', token);
   }, []);
