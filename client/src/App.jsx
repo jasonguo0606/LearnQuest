@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import RegisterPage from './pages/RegisterPage';
+import PetSelectPage from './pages/PetSelectPage';
 
 const RequireAuth = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -19,6 +20,14 @@ export default function App() {
               <div className="min-h-screen flex items-center justify-center">
                 <p className="text-xl text-gray-500">Home (coming soon)</p>
               </div>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/pets/select"
+          element={
+            <RequireAuth>
+              <PetSelectPage />
             </RequireAuth>
           }
         />
