@@ -4,6 +4,8 @@ import RegisterPage from './pages/RegisterPage';
 import PetSelectPage from './pages/PetSelectPage';
 import HomePage from './pages/HomePage';
 import AchievementsPage from './pages/AchievementsPage';
+import ShopPage from './pages/ShopPage';
+import RecordsPage from './pages/RecordsPage';
 
 const RequireAuth = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -36,6 +38,22 @@ export default function App() {
           element={
             <RequireAuth>
               <AchievementsPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/shop"
+          element={
+            <RequireAuth>
+              <ShopPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/records"
+          element={
+            <RequireAuth>
+              <RecordsPage />
             </RequireAuth>
           }
         />
