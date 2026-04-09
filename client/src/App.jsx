@@ -1,12 +1,29 @@
-import { AuthProvider } from './context/AuthContext';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import RegisterPage from './pages/RegisterPage';
+
+const RequireAuth = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? children : <Navigate to="/register" />;
+};
 
 export default function App() {
   return (
     <AuthProvider>
-      <div className="min-h-screen">
-        <h1 className="text-2xl font-bold text-center py-8">LearnQuest</h1>
-        <p className="text-center text-gray-500">Coming soon...</p>
-      </div>
+      <Routes>
+        <Route path="/register" element={<RegisterPage />} />
+        <Route
+          path="/home"
+          element={
+            <RequireAuth>
+              <div className="min-h-screen flex items-center justify-center">
+                <p className="text-xl text-gray-500">Home (coming soon)</p>
+              </div>
+            </RequireAuth>
+          }
+        />
+        <Route path="*" element={<Navigate to="/register" />} />
+      </Routes>
     </AuthProvider>
   );
 }
