@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
 import BottomTabs from '../components/BottomTabs';
 import ParentRecordPage from './ParentRecordPage';
@@ -10,13 +9,12 @@ import ParentStatsPage from './ParentStatsPage';
 const parentTabs = [
   { key: 'record', label: '记录', icon: '📝' },
   { key: 'rewards', label: '奖励', icon: '🎁' },
-  { key: 'redemptions', label: '兑换', icon: '确认' },
+  { key: 'redemptions', label: '兑换', icon: '✅' },
   { key: 'stats', label: '统计', icon: '📊' },
 ];
 
 export default function ParentDashboard() {
   const [activeTab, setActiveTab] = useState('record');
-  const { exitParentMode } = useAuth();
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">

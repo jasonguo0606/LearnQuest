@@ -2,12 +2,15 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { verifyPin } from '../services/familyService';
+import { useStars } from '../hooks/useStars';
 import StarBalance from './StarBalance';
 import PINPad from './PINPad';
 
 export default function Header({ showBalance = true }) {
   const { family, isParent, exitParentMode, enterParentMode } = useAuth();
   const [showPin, setShowPin] = useState(false);
+  const [pinError, setPinError] = useState('');
+  const { data: starBalance } = useStars();
   const navigate = useNavigate();
 
   return (
@@ -23,7 +26,7 @@ export default function Header({ showBalance = true }) {
         </div>
 
         <div className="flex items-center gap-2">
-          {showBalance && <StarBalance balance={null} />}
+          {showBalance && <StarBalance balance={starBalance} />}
           <button
             onClick={() => {
               if (isParent) {
@@ -41,20 +44,30 @@ export default function Header({ showBalance = true }) {
       </div>
 
       {showPin && (
-        <PINPad
-          title="输入家长PIN码"
-          onSubmit={async (pin) => {
-            try {
-              const data = await verifyPin(pin);
-              enterParentMode(data.token);
-              navigate('/parent');
-              setShowPin(false);
-            } catch {
-              alert('PIN码错误');
-            }
-          }}
-          onClose={() => setShowPin(false)}
-        />
+        <>
+          <PINPad
+            title="输入家长PIN码"
+            onSubmit={async (pin) => {
+              try {
+                const data = await verifyPin(pin);
+                enterParentMode(data.token);
+                setShowPin(false);
+                navigate('/parent');
+              } catch (err) {
+                console.error('[Header] PIN verification failed:', err);
+                setPinError('PIN码错误，请重试');
+              }
+            }}
+            onClose={() => { setShowPin(false); setPinError(''); }}
+          />
+          {pinError && (
+            <div className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none pb-40">
+              <p className="bg-red-100 text-red-600 px-4 py-2 rounded-lg text-sm font-medium shadow">
+                {pinError}
+              </p>
+            </div>
+          )}
+        </>
       )}
     </header>
   );

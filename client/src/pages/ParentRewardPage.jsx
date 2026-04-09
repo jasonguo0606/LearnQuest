@@ -96,16 +96,17 @@ export default function ParentRewardPage({ onBack }) {
           {mutationError && <p className="text-red-500 text-xs">{mutationError}</p>}
           <div className="flex gap-2">
             <button
-              onClick={() => editing ? updateMutation.mutate() : createMutation.mutate()}
+              onClick={() => { setMutationError(''); editing ? updateMutation.mutate() : createMutation.mutate(); }}
               className="flex-1 bg-indigo-500 text-white py-2 rounded-lg text-sm font-bold disabled:bg-indigo-300"
-              disabled={!name.trim() || !cost || createMutation.isPending || updateMutation.isPending}
+              disabled={!name.trim() || !cost || createMutation.isPending || updateMutation.isPending || deleteMutation.isPending}
             >
               {editing ? '更新' : '创建'}
             </button>
             {editing && (
               <button
-                onClick={() => deleteMutation.mutate(editing._id)}
+                onClick={() => { setMutationError(''); deleteMutation.mutate(editing._id); }}
                 className="px-3 bg-red-500 text-white py-2 rounded-lg text-sm"
+                disabled={deleteMutation.isPending}
               >
                 删除
               </button>
